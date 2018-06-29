@@ -11,7 +11,7 @@
 	});
 
 	renderer.setSize(container.offsetWidth, container.offsetHeight);
-	renderer.setClearColor(0x55dea6);
+	renderer.setClearColor(0x1f1f1f);
 	renderer.shadowMapEnabled = true;
 	renderer.isRunning = true;
 	renderer.subAnimation = {
@@ -48,8 +48,7 @@
 	addEventListeners();
 	animate();
 	render();
-	addStats();
-	initGame();
+	// addStats();
 })();
 
 function animate() {
@@ -67,35 +66,39 @@ function render() {
 }
 
 var userViews;
+var me;
 
-function initGame(data) {
-	console.log(`hello - ${data}`);
-	if (!data) return;
-	if (data) {
-		if (userViews) {
-			createUser(data.users[data.id], data.id);
+function initGame(users) {
+	console.log(`hello - ${users}`);
+	if (!users || userViews) return;
+	loadText.then(() => {
+		for (let id in users) {
+			createUser(users[id]);
 		}
-		else{
-			userViews = {};
-			let users = data.users;
-			for (let id in users) {
-				createUser(users[id], id);
-			}
-		}
-	}
-
+	});
 }
 
-function createUser(user, id) {
+function createUser(user) {
+	if (!userViews) userViews = {};
 	let material = new THREE.MeshPhongMaterial({ color: user.color });
 	let geometry = new THREE.CubeGeometry(50, 50, 50, 1, 1, 1);
 	let mesh = new THREE.Mesh(geometry, material);
-	userViews[id] = mesh;
-	mesh.position.copy(user.position);
-	scene.add(mesh);
+	let player = new THREE.Group();
+	player.add(mesh);
+
+	let text = createText(user.name, user.color, 10);
+	// text.rotateY(Math.PI / 2);
+	text.position.y = 50;
+	text.position.x -= 25;
+	player.add(text);
+
+	userViews[user.id] = player;
+	player.position.copy(user.position);
+	scene.add(player);
 }
 
 function disconnectUser(user) {
+	if(!user) return;
 	scene.remove(userViews[user.id]);
 	delete userViews[user.id];
 }

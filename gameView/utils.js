@@ -11,7 +11,7 @@ function addOrbitControls() {
 	// devModules.controls = new THREE.FirstPersonControls(camera);
 	devModules.controls = new THREE.OrbitControls(camera, renderer.domElement);
 	// devModules.controls.addEventListener('change', render);
-	devModules.controls.maxPolarAngle = Math.PI / 2.2;
+	// devModules.controls.maxPolarAngle = Math.PI / 2.2;
 	devModules.controls.maxDistance = 4200;
 	devModules.controls.minDistance = 0;
 	devModules.controls.maxPan = 1000;

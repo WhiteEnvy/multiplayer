@@ -8,16 +8,14 @@ var users = {};
 // app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
 // http.listen(4500, () =>  console.log('listening on :4500'));
 
-app.set('port', (process.env.PORT || 3000));
+app.set('port', (process.env.PORT || 4000));
 app.use('/', express.static(__dirname));
 
 
 io.on('connection', socket => {
-    users[socket.conn.id] = new User(socket.conn.id);
-    let user = users[socket.conn.id];
+    let user;
 
-    io.emit('user connected', { users, id: user.id });
-
+    io.emit('user connected', users );
 
     socket.on('disconnect', () => {
         console.log(user);
@@ -25,13 +23,21 @@ io.on('connection', socket => {
         delete users[socket.conn.id];
     });
 
+    socket.on('set name', data => {
+        users[socket.conn.id] = new User(socket.conn.id, data.name, data.color);
+        user = users[socket.conn.id];
+
+        io.emit('add player', user);
+    });
     
     socket.on('startJump', () => {
+        if(!user) return;
         user.isJumped = true;
         user.position.y += 5;
         io.emit('user actions', user);
     });
     socket.on('stopJump', () => {
+        if(!user) return;
         user.isJumped = false;
         io.emit('user actions', user);
     })
@@ -40,17 +46,18 @@ io.on('connection', socket => {
 
 http.listen(app.get('port'), function() {
     console.log('Server started: http://localhost:' + app.get('port') + '/');
-    });
+});
 
 class User {
-    constructor(id){
+    constructor(id, name, color){
         this.id = id;
+        this.name = name;
         this.position = {
             x: 0,
             y: 0,
             z: 0
         };
         this.isJumped = false;
-        this.color = Math.random() * 0xffffff;
+        this.color = color;
     }
 }

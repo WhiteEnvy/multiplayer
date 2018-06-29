@@ -20,9 +20,9 @@ var controlsPositions = {
 // }
 
 var cameraPositions = {
-    x: 1550,
-    y: 1550,
-    z: 1550
+    x: 0,
+    y: 0,
+    z: 2000
 }
 
 var container = document.getElementById('scene');
