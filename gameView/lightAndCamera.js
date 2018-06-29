@@ -14,7 +14,7 @@ function setCameraDefaultPosition() {
 }
 
 function createLight() {
-	scene.add(globalLight = new THREE.AmbientLight(0xf0f0f0, 1.5));
+	// scene.add(globalLight = new THREE.AmbientLight(0xf0f0f0, 1.5));
 	light = new THREE.SpotLight(0xe6cda9, .41);
 	light.castShadow = true;
 	light.shadow = new THREE.LightShadow(new THREE.PerspectiveCamera(70, 1, 10, 2000));

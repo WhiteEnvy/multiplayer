@@ -11,10 +11,12 @@ $(function () {
 
     $(window).keydown(e => {
         if (e.which == 32) {
-            if(!me) return;
-            socket.emit('startJump');
+            jump();
         }
     });
+
+    window.addEventListener("touchstart", jump, false);
+
     $(window).keyup(e => {
         if (e.which == 32) {
             if(!me) return;
@@ -24,8 +26,22 @@ $(function () {
 
     $('#player-name').keydown(e => {
         if (e.which == 13) {
-            socket.emit('set name', {name: $('#player-name').val(), color: Math.random() * 0xffffff});
-            $('#player-name').remove();
+            setName();
         }
     });
+
+    $('#go').click(() => {
+        setName();
+    });
+
+    function setName() {
+        if($('#player-name').val() == '') return;
+        socket.emit('set name', {name: $('#player-name').val(), color: Math.random() * 0xffffff});
+        $('#init').remove();
+    }
+
+    function jump(){
+        if(!me) return;
+        socket.emit('startJump');
+    }
 });
