@@ -4,8 +4,13 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var users = {};
 
-app.use('/', express.static(__dirname));
+// app.use('/', express.static(__dirname));
 // app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
+// http.listen(4500, () =>  console.log('listening on :4500'));
+
+app.set('port', (process.env.PORT || 3000));
+app.use('/', express.static(__dirname));
+
 
 io.on('connection', socket => {
     users[socket.conn.id] = new User(socket.conn.id);
@@ -32,7 +37,10 @@ io.on('connection', socket => {
     })
 });
 
-http.listen(3000, () =>  console.log('listening on :3000'));
+
+http.listen(app.get('port'), function() {
+    console.log('Server started: http://localhost:' + app.get('port') + '/');
+    });
 
 class User {
     constructor(id){
