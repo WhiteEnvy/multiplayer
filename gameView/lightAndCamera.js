@@ -34,3 +34,10 @@ function updateLightPosition() {
 function resetControlsPotision() {
 	devModules.controls.center.copy(controlsPositions);
 }
+
+function updateCameraPosition(position) {
+	if(!position) return;
+	camera.position.copy(position);
+	devModules.controls.center.copy(position);
+	camera.position.z += 150;
+}

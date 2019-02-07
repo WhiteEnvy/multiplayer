@@ -3,12 +3,10 @@
 	camera = new THREE.PerspectiveCamera(21, container.offsetWidth / container.offsetHeight, 0.1, 5000);
 	raycaster = new THREE.Raycaster();
 	mouse = new THREE.Vector2();
-	setCameraDefaultPosition();
+	// setCameraDefaultPosition();
 	createLight();
 
-	renderer = new THREE.WebGLRenderer({
-		antialias: true
-	});
+	renderer = new THREE.WebGLRenderer();
 
 	renderer.setSize(container.offsetWidth, container.offsetHeight);
 	renderer.setClearColor(0x1f1f1f);
@@ -45,16 +43,16 @@
 	canvas = document.getElementsByTagName('canvas')[0];
 
 	addOrbitControls();
+	updateCameraPosition({x:0, y:0, z:0})
 	addEventListeners();
 	animate();
 	render();
-	// addStats();
+	addStats();
 })();
 
 function animate() {
 	requestAnimationFrame(animate);
-	if (optimizedFuncions.render.checkEventIsUnavailable()) return;
-
+	// if (optimizedFuncions.render.checkEventIsUnavailable()) return;
 	renderer.subAnimation.play();
 	render();
 
@@ -64,46 +62,3 @@ function animate() {
 function render() {
 	renderer.render(scene, camera);
 }
-
-var userViews;
-var me;
-
-function initGame(users) {
-	console.log(`hello - ${users}`);
-	if (!users || userViews) return;
-	loadText.then(() => {
-		for (let id in users) {
-			createUser(users[id]);
-		}
-	});
-}
-
-function createUser(user) {
-	if (!userViews) userViews = {};
-	let material = new THREE.MeshPhongMaterial({ color: user.color });
-	let geometry = new THREE.CubeGeometry(50, 50, 50, 1, 1, 1);
-	let mesh = new THREE.Mesh(geometry, material);
-	let player = new THREE.Group();
-	player.add(mesh);
-
-	let text = createText(user.name, user.color, 10);
-	// text.rotateY(Math.PI / 2);
-	text.position.y = 50;
-	text.position.x -= 25;
-	player.add(text);
-
-	userViews[user.id] = player;
-	player.position.copy(user.position);
-	scene.add(player);
-}
-
-function disconnectUser(user) {
-	if(!user) return;
-	scene.remove(userViews[user.id]);
-	delete userViews[user.id];
-}
-
-function userAction(user) {
-	userViews[user.id].position.copy(user.position);
-}
-

@@ -15,7 +15,7 @@ app.use('/', express.static(__dirname));
 io.on('connection', socket => {
     let user;
 
-    io.emit('user connected', users );
+    // io.emit('user connected', users );
 
     socket.on('disconnect', () => {
         console.log(user);
@@ -28,19 +28,33 @@ io.on('connection', socket => {
         user = users[socket.conn.id];
 
         io.emit('add player', user);
+        console.log(users);
     });
+
+    setInterval(()=>{
+        if(users){
+            io.emit('world info', users);
+        }
+    }, 1000/60);
+
+    socket.on('user info', userInfo => {
+        if(!userInfo) return;
+        let user = users[userInfo.id];
+        for(let prop in user){
+            user[prop] = userInfo[prop];
+        }
+    });
+   
     
-    socket.on('startJump', () => {
-        if(!user) return;
-        user.isJumped = true;
-        user.position.y += 5;
-        io.emit('user actions', user);
-    });
-    socket.on('stopJump', () => {
-        if(!user) return;
-        user.isJumped = false;
-        io.emit('user actions', user);
-    })
+    // socket.on('startJump', (position) => {
+    //     if(!user) return;
+    //     user.position = position;
+    // });
+    // socket.on('stopJump', () => {
+    //     if(!user) return;
+    //     user.isJumped = false;
+    //     io.emit('user actions', user);
+    // })
 });
 
 
@@ -59,5 +73,6 @@ class User {
         };
         this.isJumped = false;
         this.color = color;
+        this.onScene = false;
     }
 }
